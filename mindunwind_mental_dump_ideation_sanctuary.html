@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MindUnwind — Mental Dump & Ideation Sanctuary</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Phosphor Icons for calm, elegant iconography -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <!-- Google Fonts: Inter & Caveat for hand-drawn expression -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            handwriting: ['"Caveat"', 'cursive'],
+            serif: ['"Playfair Display"', 'serif'],
+          },
+          colors: {
+            sanctuary: {
+              50: '#FBFBFA',
+              100: '#F4F3F0',
+              200: '#E8E6E0',
+              300: '#D6D3CA',
+              400: '#A8A498',
+              500: '#7B776C',
+              600: '#5A564C',
+              700: '#3D3A33',
+              800: '#23211D',
+              900: '#141311',
+              950: '#0C0B0A',
+            },
+            sage: {
+              50: '#f4f7f4',
+              100: '#e5ebe5',
+              300: '#b8ccb8',
+              500: '#759b75',
+              700: '#435e43',
+            },
+            lavender: {
+              50: '#f7f6fb',
+              100: '#edeaf6',
+              300: '#cfc6e8',
+              500: '#9483c6',
+              700: '#584988',
+            },
+            ember: {
+              500: '#f97316',
+              600: '#ea580c',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(150, 150, 150, 0.25);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(150, 150, 150, 0.45);
+    }
+    
+    /* Subtle Canvas Background Pattern */
+    .paper-texture-light {
+      background-color: #F8F7F4;
+      background-image: radial-gradient(#d5d1c8 0.75px, transparent 0.75px);
+      background-size: 24px 24px;
+    }
+    .paper-texture-dark {
+      background-color: #171614;
+      background-image: radial-gradient(#2d2b27 0.75px, transparent 0.75px);
+      background-size: 24px 24px;
+    }
+
+    /* Burn / Dissolve Animation */
+    @keyframes disintegrate {
+      0% {
+        opacity: 1;
+        filter: blur(0px) contrast(100%);
+        transform: translateY(0) scale(1);
+      }
+      30% {
+        filter: blur(2px) contrast(150%) hue-rotate(20deg);
+        color: #f97316;
+        text-shadow: 0 0 15px rgba(249, 115, 22, 0.8);
+      }
+      70% {
+        filter: blur(8px) contrast(200%);
+        transform: translateY(-20px) scale(0.96) rotate(-0.5deg);
+        opacity: 0.5;
+        color: #ef4444;
+      }
+      100% {
+        filter: blur(24px) contrast(300%);
+        transform: translateY(-50px) scale(0.9);
+        opacity: 0;
+      }
+    }
+    .burn-animation {
+      animation: disintegrate 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+      pointer-events: none;
+    }
+
+    /* Floating particles canvas overlay */
+    #fxCanvas {
+      pointer-events: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 50;
+    }
+
+    /* Canvas touch fix */
+    canvas {
+      touch-action: none;
+    }
+  </style>
+</head>
+<body class="bg-sanctuary-100 dark:bg-sanctuary-950 text-sanctuary-800 dark:text-sanctuary-100 font-sans transition-colors duration-500 min-h-screen flex flex-col select-none overflow-x-hidden">
+
+  <!-- Floating Particle & Effect Canvas -->
+  <canvas id="fxCanvas"></canvas>
+
+  <!-- TOP HEADER / NAV -->
+  <header class="w-full border-b border-sanctuary-200 dark:border-sanctuary-800/80 bg-sanctuary-50/90 dark:bg-sanctuary-900/90 backdrop-blur-md sticky top-0 z-30 px-4 md:px-8 py-3 transition-colors">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      
+      <!-- Logo & Mood Badge -->
+      <div class="flex items-center space-x-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sage-500 to-lavender-500 flex items-center justify-center text-white shadow-sm shadow-sage-500/30">
+          <i class="ph-bold ph-wind text-xl"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base md:text-lg font-semibold tracking-tight text-sanctuary-900 dark:text-sanctuary-50">MindUnwind</h1>
+            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-sage-100 dark:bg-sage-900/40 text-sage-700 dark:text-sage-300">Sanctuary</span>
+          </div>
+          <p class="text-xs text-sanctuary-500 dark:text-sanctuary-400 hidden sm:block">Dump overthinking. Untangle chaos. Discover passion.</p>
+        </div>
+      </div>
+
+      <!-- Mode Switcher Tabs -->
+      <div class="flex items-center bg-sanctuary-200/70 dark:bg-sanctuary-800/80 p-1 rounded-2xl">
+        <button id="tabCanvasBtn" onclick="switchMainTab('canvas')" class="flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-xl text-xs sm:text-sm font-medium transition-all shadow-sm bg-white dark:bg-sanctuary-700 text-sanctuary-900 dark:text-white">
+          <i class="ph-bold ph-paint-brush"></i>
+          <span>Scribble & Draw</span>
+        </button>
+        <button id="tabWriteBtn" onclick="switchMainTab('write')" class="flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-xl text-xs sm:text-sm font-medium transition-all text-sanctuary-600 dark:text-sanctuary-300 hover:text-sanctuary-900">
+          <i class="ph-bold ph-pen-nib"></i>
+          <span>Stream of Thought</span>
+        </button>
+        <button id="tabSplitBtn" onclick="switchMainTab('split')" class="hidden lg:flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-xl text-xs sm:text-sm font-medium transition-all text-sanctuary-600 dark:text-sanctuary-300 hover:text-sanctuary-900">
+          <i class="ph-bold ph-columns"></i>
+          <span>Dual Studio</span>
+        </button>
+      </div>
+
+      <!-- Controls & Utilities -->
+      <div class="flex items-center space-x-2 md:space-x-3">
+        
+        <!-- Ambient Sound Player -->
+        <div class="relative">
+          <button id="ambientMenuBtn" onclick="toggleSoundMenu()" class="p-2 rounded-xl bg-sanctuary-100 dark:bg-sanctuary-800 hover:bg-sanctuary-200 dark:hover:bg-sanctuary-700 text-sanctuary-600 dark:text-sanctuary-300 transition-colors flex items-center gap-1.5" title="Calming Soundscapes">
+            <i id="ambientIcon" class="ph-bold ph-speaker-slash text-lg"></i>
+            <span id="soundLabel" class="text-xs hidden md:inline">Ambient: Off</span>
+          </button>
+          
+          <!-- Sound Dropdown Popover -->
+          <div id="ambientPopover" class="hidden absolute right-0 mt-2 w-64 p-3 bg-white dark:bg-sanctuary-900 border border-sanctuary-200 dark:border-sanctuary-800 rounded-2xl shadow-xl z-50">
+            <div class="flex items-center justify-between pb-2 border-b border-sanctuary-100 dark:border-sanctuary-800 mb-2">
+              <span class="text-xs font-semibold uppercase tracking-wider text-sanctuary-400">Calming Soundscape</span>
+              <button onclick="stopAmbient()" class="text-[11px] text-rose-500 hover:underline">Mute</button>
+            </div>
+            <div class="grid grid-cols-2 gap-1.5 mb-3">
+              <button onclick="playAmbient('rain')" class="sound-option p-2 rounded-xl text-xs flex items-center gap-2 bg-sanctuary-100 dark:bg-sanctuary-800 hover:bg-sage-100 dark:hover:bg-sage-900/30 text-left transition-colors">
+                <i class="ph-bold ph-cloud-rain text-sage-500"></i> Soft Rain
+              </button>
+              <button onclick="playAmbient('stream')" class="sound-option p-2 rounded-xl text-xs flex items-center gap-2 bg-sanctuary-100 dark:bg-sanctuary-800 hover:bg-sage-100 dark:hover:bg-sage-900/30 text-left transition-colors">
+                <i class="ph-bold ph-waves text-blue-400"></i> Zen Stream
+              </button>
+              <button onclick="playAmbient('whitenoise')" class="sound-option p-2 rounded-xl text-xs flex items-center gap-2 bg-sanctuary-100 dark:bg-sanctuary-800 hover:bg-sage-100 dark:hover:bg-sage-900/30 text-left transition-colors">
+                <i class="ph-bold ph-wind text-lavender-500"></i> Pink Noise
+              </button>
+              <button onclick="playAmbient('hearth')" class="sound-option p-2 rounded-xl text-xs flex items-center gap-2 bg-sanctuary-100 dark:bg-sanctuary-800 hover:bg-sage-100 dark:hover:bg-sage-900/30 text-left transition-colors">
+                <i class="ph-bold ph-fire text-amber-500"></i> Warm Hearth
+              </button>
+            </div>
+            <div>
+              <label class="text-[11px] text-sanctuary-400 flex justify-between mb-1">
+                <span>Volume</span>
+                <span id="volVal">40%</span>
+              </label>
+              <input id="volumeSlider" type="range" min="0" max="1" step="0.05" value="0.4" oninput="setAmbientVolume(this.value)" class="w-full accent-sage-500 cursor-pointer h-1.5 bg-sanctuary-200 dark:bg-sanctuary-700 rounded-lg appearance-none">
+            </div>
+          </div>
+        </div>
+
+        <!-- Vault Modal Trigger -->
+        <button onclick="openVaultModal()" class="p-2 rounded-xl bg-sanctuary-100 dark:bg-sanctuary-800 hover:bg-sanctuary-200 dark:hover:bg-sanctuary-700 text-sanctuary-600 dark:text-sanctuary-300 transition-colors flex items-center gap-1.5" title="Mind Vault">
+          <i class="ph-bold ph-archive-box text-lg"></i>
+          <span class="text-xs hidden sm:inline">Vault</span>
+          <span id="vaultBadge" class="hidden w-2 h-2 rounded-full bg-sage-500"></span>
+        </button>
+
+        <!-- Dark/Light Mode Switcher -->
+        <button id="themeToggleBtn" onclick="toggleDarkMode()" class="p-2 rounded-xl bg-sanctuary-100 dark:bg-sanctuary-800 hover:bg-sanctuary-200 dark:hover:bg-sanctuary-700 text-sanctuary-600 dark:text-sanctuary-300 transition-colors" title="Toggle Theme">
+          <i id="themeIcon" class="ph-bold ph-moon text-lg"></i>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN WORKSPACE -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-3 md:p-6 flex flex-col gap-4">
+    
+    <!-- TOP PROMPT STRIP & QUICK ACTIONS -->
+    <div class="flex flex-wrap items-center justify-between gap-3 bg-sanctuary-50/80 dark:bg-sanctuary-900/60 p-3 rounded-2xl border border-sanctuary-200/80 dark:border-sanctuary-800/80 backdrop-blur-sm">
+      <div class="flex items-center gap-2.5 flex-1 min-w-[280px]">
+        <div class="w-7 h-7 rounded-lg bg-lavender-100 dark:bg-lavender-900/40 text-lavender-600 dark:text-lavender-300 flex items-center justify-center shrink-0">
+          <i class="ph-bold ph-sparkle text-base"></i>
+        </div>
+        <div class="flex-1 overflow-hidden">
+          <p id="promptDisplay" class="text-xs sm:text-sm italic font-handwriting text-sanctuary-700 dark:text-sanctuary-300 truncate">
+            "Scribble your current chaos without looking at what it looks like. Just let the hand move."
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="rollNextPrompt()" class="px-2.5 py-1.5 rounded-xl bg-sanctuary-200/60 dark:bg-sanctuary-800 hover:bg-sanctuary-300/60 dark:hover:bg-sanctuary-700 text-xs font-medium text-sanctuary-700 dark:text-sanctuary-300 flex items-center gap-1.5 transition-colors">
+          <i class="ph-bold ph-arrows-clockwise text-xs"></i>
+          <span>New Spark</span>
+        </button>
+        <button onclick="openPassionMiner()" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-sage-500 to-lavender-500 hover:opacity-95 text-xs font-medium text-white flex items-center gap-1.5 shadow-sm shadow-sage-500/20 transition-all">
+          <i class="ph-bold ph-compass text-xs"></i>
+          <span>Mine for Passion</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- STUDIO CORE: CANVAS + WRITER CONTAINER -->
+    <div id="studioGrid" class="flex-1 grid grid-cols-1 gap-4 min-h-[580px]">
+      
+      <!-- ================= DRAWING / SCRIBBLE CANVAS SECTION ================= -->
+      <section id="canvasSection" class="relative flex flex-col bg-sanctuary-50 dark:bg-sanctuary-900 rounded-3xl border border-sanctuary-200 dark:border-sanctuary-800 shadow-sm overflow-hidden min-h-[500px]">
+        
+        <!-- Canvas Toolbar -->
+        <div class="p-3 border-b border-sanctuary-200/80 dark:border-sanctuary-800/80 flex flex-wrap items-center justify-between gap-2.5 bg-white/50 dark:bg-sanctuary-900/50 backdrop-blur-sm z-10">
+          
+          <!-- Tool Palette -->
+          <div class="flex items-center gap-1 bg-sanctuary-100 dark:bg-sanctuary-800 p-1 rounded-2xl">
+            <!-- Pen / Scribble -->
+            <button id="tool-pen" onclick="setCanvasTool('pen')" class="tool-btn p-2 rounded-xl text-xs font-medium bg-white dark:bg-sanctuary-700 text-sanctuary-900 dark:text-white shadow-xs" title="Scribble Pen (Expressive)">
+              <i class="ph-bold ph-pencil-simple text-base"></i>
+            </button>
+            <!-- Chaotic Tangle Brush -->
+            <button id="tool-tangle" onclick="setCanvasTool('tangle')" class="tool-btn p-2 rounded-xl text-xs font-medium text-sanctuary-600 dark:text-sanctuary-300 hover:text-sanctuary-900" title="Chaotic Tangle Brush (Overthinking Release)">
+              <i class="ph-bold ph-spiral text-base"></i>
+            </button>
+            <!-- Soft Charcoal -->
+            <button id="tool-charcoal" onclick="setCanvasTool('charcoal')" class="tool-btn p-2 rounded-xl text-xs font-medium text-sanctuary-600 dark:text-sanctuary-300 hover:text-sanctuary-900" title="Soft Charcoal">
+              <i class="ph-bold ph-paint-brush-broad text-base"></i>
+            </button>
+            <!-- Glowing Neon Chalk -->
+            <button id="tool-glow" onclick="setCanvasTool('glow')" class="tool-btn p-2 rounded-xl text-xs font-medium text-sanctuary-600 dark:text-sanctuary-300 hover:text-sanctuary-900" title="Neon Passion Glow">
+              <i class="ph-bold ph-sparkle text-base"></i>
+            </button>
+            <!-- Eraser -->
+            <button id="tool-eraser" onclick="setCanvasTool('eraser')" class="tool-btn p-2 rounded-xl text-xs font-medium text-sanctuary-600 dark:text-sanctuary-300 hover:text-sanctuary-900" title="Eraser">
+              <i class="ph-bold ph-eraser text-base"></i>
+            </button>
+          </div>
+
+          <!-- Color Swatches -->
+          <div class="flex items-center gap-1.5 px-2 py-1 bg-sanctuary-100 dark:bg-sanctuary-800 rounded-2xl">
+            <button onclick="setCanvasColor('#1f2937')" class="color-dot w-6 h-6 rounded-full border-2 border-white dark:border-sanctuary-900 bg-gray-800 scale-110 shadow-xs" data-color="#1f2937" title="Ink Black"></button>
+            <button onclick="setCanvasColor('#e11d48')" class="color-dot w-6 h-6 rounded-full border-2 border-white dark:border-sanctuary-900 bg-rose-600 shadow-xs" data-color="#e11d48" title="Fiery Passion / Anguish"></button>
+            <button onclick="setCanvasColor('#f97316')" class="color-dot w-6 h-6 rounded-full border-2 border-white dark:border-sanctuary-900 bg-amber-500 shadow-xs" data-color="#f97316" title="Ember Warmth"></button>
+            <button onclick="setCanvasColor('#10b981')" class="color-dot w-6 h-6 rounded-full border-2 border-white dark:border-sanctuary-900 bg-emerald-500 shadow-xs" data-color="#10b981" title="Calming Sage"></button>
+            <button onclick="setCanvasColor('#6366f1')" class="color-dot w-6 h-6 rounded-full border-2 border-white dark:border-sanctuary-900 bg-indigo-500 shadow-xs" data-color="#6366f1" title="Lavender Wonder"></button>
+            <button onclick="setCanvasColor('#06b6d4')" class="color-dot w-6 h-6 rounded-full border-2 border-white dark:border-sanctuary-900 bg-cyan-400 shadow-xs" data-color="#06b6d4" title="Deep Horizon"></button>
+            <button onclick="setCanvasColor('#f8fafc')" class="color-dot w-6 h-6 rounded-full border-2 border-white dark:border-sanctuary-900 bg-slate-100 shadow-xs" data-color="#f8fafc" title="Pure Paper Chalk"></button>
+            <input type="color" id="customColorPicker" onchange="setCanvasColor(this.value)" class="w-6 h-6 rounded-full overflow-hidden cursor-pointer opacity-0 absolute w-0 h-0" />
+            <button onclick="document.getElementById('customColorPicker').click()" class="w-6 h-6 rounded-full border border-dashed border-sanctuary-400 dark:border-sanctuary-500 flex items-center justify-center text-[10px]" title="Custom Color">
+              <i class="ph ph-plus"></i>
+            </button>
+          </div>
+
+          <!-- Size Slider -->
+          <div class="flex items-center gap-2 bg-sanctuary-100 dark:bg-sanctuary-800 px-3 py-1.5 rounded-2xl">
+            <span class="text-[11px] text-sanctuary-500">Size</span>
+            <input id="brushSize" type="range" min="1" max="45" value="4" oninput="updateBrushSize(this.value)" class="w-16 sm:w-20 accent-sage-500 cursor-pointer h-1.5 bg-sanctuary-300 dark:bg-sanctuary-700 rounded-lg appearance-none">
+            <span id="brushSizeVal" class="text-xs font-mono w-4">4</span>
+          </div>
+
+          <!-- Actions: Undo, Redo, Clear, Save, Release -->
+          <div class="flex items-center gap-1">
+            <button onclick="undoCanvas()" class="p-2 rounded-xl bg-sanctuary-100 dark:bg-sanctuary-800 hover:bg-sanctuary-200 dark:hover:bg-sanctuary-700 text-sanctuary-600 dark:text-sanctuary-300 transition-colors" title="Undo">
+              <i class="ph-bold ph-arrow-u-up-left"></i>
+            </button>
+            <button onclick="redoCanvas()" class="p-2 rounded-xl bg-sanctuary-100 dark:bg-sanctuary-800 hover:bg-sanctuary-200 dark:hover:bg-sanctuary-700 text-sanctuary-600 dark:text-sanctuary-300 transition-colors" title="Redo">
+              <i class="ph-bold ph-arrow-u-up-right"></i>
+            </button>
+            <button onclick="saveCanvasToVault()" class="p-2 rounded-xl bg-sanctuary-100 dark:bg-sanctuary-800 hover:bg-sanctuary-200 dark:hover:bg-sanctuary-700 text-sanctuary-600 dark:text-sanctuary-300 transition-colors" title="Store in Vault">
+              <i class="ph-bold ph-floppy-disk"></i>
+            </button>
+            <button onclick="downloadCanvasPNG()" class="p-2 rounded-xl bg-sanctuary-100 dark:bg-sanctuary-800 hover:bg-sanctuary-200 dark:hover:bg-sanctuary-700 text-sanctuary-600 dark:text-sanctuary-300 transition-colors" title="Download High-Res PNG">
+              <i class="ph-bold ph-download-simple"></i>
+            </button>
+            <button onclick="triggerCanvasRelease()" class="px-3 py-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/40 border border-rose-200 dark:border-rose-900 text-xs font-medium flex items-center gap-1 transition-all" title="Dissolve and Let Go">
+              <i class="ph-bold ph-wind"></i>
+              <span>Let Go</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Canvas Area & Watermark Guidance -->
+        <div class="relative flex-1 w-full h-full min-h-[460px] overflow-hidden" id="canvasContainer">
+          <canvas id="paintCanvas" class="w-full h-full paper-texture-light dark:paper-texture-dark cursor-crosshair block"></canvas>
+          
+          <div id="canvasEmptyHint" class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center opacity-40 select-none p-4 text-center">
+            <i class="ph ph-spiral text-4xl mb-2 text-sanctuary-400"></i>
+            <p class="font-handwriting text-2xl text-sanctuary-600 dark:text-sanctuary-300">Untangle your head here.</p>
+            <p class="text-xs max-w-xs text-sanctuary-400 mt-1">Scribble furiously, draw raw shapes, map an imaginary machine, or connect frantic dots.</p>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ================= STREAM OF CONSCIOUSNESS WRITING SECTION ================= -->
+      <section id="writeSection" class="relative flex flex-col bg-sanctuary-50 dark:bg-sanctuary-900 rounded-3xl border border-sanctuary-200 dark:border-sanctuary-800 shadow-sm overflow-hidden min-h-[500px] hidden">
+        
+        <!-- Writing Header & Dump Timer -->
+        <div class="p-3 border-b border-sanctuary-200/80 dark:border-sanctuary-800/80 flex flex-wrap items-center justify-between gap-3 bg-white/50 dark:bg-sanctuary-900/50 backdrop-blur-sm z-10">
+          
+          <div class="flex items-center gap-3">
+            <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-sanctuary-100 dark:bg-sanctuary-800 text-xs">
+              <i class="ph-bold ph-timer text-amber-500"></i>
+              <span id="timerDisplay" class="font-mono font-semibold">Free Flow</span>
+            </div>
+            
+            <div class="flex items-center gap-1">
+              <button onclick="startDumpTimer(120)" class="px-2.5 py-1 rounded-xl text-xs bg-sanctuary-200/70 dark:bg-sanctuary-800 hover:bg-sanctuary-300/80 dark:hover:bg-sanctuary-700 transition-colors">
+                2m Sprint
+              </button>
+              <button onclick="startDumpTimer(300)" class="px-2.5 py-1 rounded-xl text-xs bg-sanctuary-200/70 dark:bg-sanctuary-800 hover:bg-sanctuary-300/80 dark:hover:bg-sanctuary-700 transition-colors">
+                5m Deep
+              </button>
+              <button id="stopTimerBtn" onclick="stopDumpTimer()" class="hidden px-2 py-1 rounded-xl text-xs text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40">
+                Cancel
+              </button>
+            </div>
+          </div>
+
+          <!-- Word / Character Stats -->
+          <div class="flex items-center gap-3 text-xs text-sanctuary-500">
+            <span id="wordCount">0 words</span>
+            <span class="text-sanctuary-300 dark:text-sanctuary-700">•</span>
+            <span id="charCount">0 characters</span>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex items-center gap-2">
+            <button onclick="saveJournalEntry()" class="px-3 py-1.5 rounded-xl bg-sanctuary-100 dark:bg-sanctuary-800 hover:bg-sanctuary-200 dark:hover:bg-sanctuary-700 text-xs font-medium text-sanctuary-700 dark:text-sanctuary-300 flex items-center gap-1.5 transition-colors">
+              <i class="ph-bold ph-archive"></i>
+              <span>Keep in Vault</span>
+            </button>
+
+            <!-- Burn / Vanish Release Button -->
+            <button onclick="burnTextDissolve()" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-ember-500 to-rose-600 hover:opacity-95 text-xs font-medium text-white flex items-center gap-1.5 shadow-sm shadow-ember-500/30 transition-all" title="Disintegrate this thought forever">
+              <i class="ph-bold ph-flame"></i>
+              <span>Burn & Free Mind</span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Text Area Body -->
+        <div class="relative flex-1 p-5 md:p-8 flex flex-col justify-between overflow-hidden">
+          <textarea
+            id="mindDumpInput"
+            placeholder="Do not pause. Do not backspace or fix grammar. Dump raw anxieties, half-baked startup concepts, childhood nostalgia, unsaid words, or chaotic dream fragments..."
+            class="w-full flex-1 bg-transparent resize-none outline-none font-sans text-base md:text-lg leading-relaxed text-sanctuary-800 dark:text-sanctuary-100 placeholder:text-sanctuary-400/60 transition-all"
+            oninput="handleTextInput(this)"
+          ></textarea>
+
+          <!-- Writing Bottom Toolbar with Mood Tagger -->
+          <div class="pt-3 border-t border-sanctuary-200/50 dark:border-sanctuary-800/50 flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div class="flex items-center gap-2">
+              <span class="text-sanctuary-400">Classify:</span>
+              <select id="entryCategory" class="bg-sanctuary-100 dark:bg-sanctuary-800 border-none outline-none text-sanctuary-700 dark:text-sanctuary-300 text-xs rounded-xl px-2.5 py-1 cursor-pointer">
+                <option value="Raw Overthinking">Raw Overthinking (Release)</option>
+                <option value="Passion Spark">Passion Spark & Creative Urge</option>
+                <option value="Imaginary Project">Wild Imaginary Invention</option>
+                <option value="Emotional Cloud">Heavy Emotional Cloud</option>
+              </select>
+            </div>
+
+            <div class="text-sanctuary-400 italic">
+              "No judgment lives here. Whatever enters this box is valid."
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- ================= MODAL: PASSION & INSIGHT MINER ================= -->
+  <div id="passionMinerModal" class="fixed inset-0 bg-sanctuary-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-sanctuary-50 dark:bg-sanctuary-900 border border-sanctuary-200 dark:border-sanctuary-800 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl relative max-h-[90vh] flex flex-col overflow-hidden">
+      
+      <div class="flex items-center justify-between pb-4 border-b border-sanctuary-200 dark:border-sanctuary-800">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-sage-100 dark:bg-sage-900/50 text-sage-600 dark:text-sage-400 flex items-center justify-center">
+            <i class="ph-bold ph-compass text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold text-sanctuary-900 dark:text-white">Passion & Clarity Miner</h3>
+            <p class="text-xs text-sanctuary-500">Unearthing hidden patterns, energy spikes, and interests from your thoughts.</p>
+          </div>
+        </div>
+        <button onclick="closePassionMiner()" class="p-2 rounded-xl text-sanctuary-400 hover:text-sanctuary-700 dark:hover:text-sanctuary-200">
+          <i class="ph-bold ph-x text-lg"></i>
+        </button>
+      </div>
+
+      <div class="py-5 overflow-y-auto space-y-6 flex-1 pr-1" id="minerResultsContainer">
+        <!-- Content dynamically injected here -->
+      </div>
+
+      <div class="pt-4 border-t border-sanctuary-200 dark:border-sanctuary-800 flex justify-between items-center">
+        <button onclick="copyInsightsToClipboard()" class="px-3.5 py-2 rounded-xl bg-sanctuary-200 dark:bg-sanctuary-800 hover:bg-sanctuary-300 dark:hover:bg-sanctuary-700 text-xs font-medium flex items-center gap-1.5 transition-colors">
+          <i class="ph-bold ph-copy"></i>
+          <span>Copy Clarity Snapshot</span>
+        </button>
+        <button onclick="closePassionMiner()" class="px-5 py-2 rounded-xl bg-sanctuary-900 dark:bg-white text-white dark:text-sanctuary-900 text-xs font-semibold hover:opacity-90">
+          Done
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= MODAL: STORAGE VAULT & ARCHIVE ================= -->
+  <div id="vaultModal" class="fixed inset-0 bg-sanctuary-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-sanctuary-50 dark:bg-sanctuary-900 border border-sanctuary-200 dark:border-sanctuary-800 rounded-3xl max-w-4xl w-full p-6 sm:p-8 shadow-2xl relative max-h-[92vh] flex flex-col overflow-hidden">
+      
+      <div class="flex items-center justify-between pb-4 border-b border-sanctuary-200 dark:border-sanctuary-800">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-lavender-100 dark:bg-lavender-900/50 text-lavender-600 dark:text-lavender-400 flex items-center justify-center">
+            <i class="ph-bold ph-archive-box text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold text-sanctuary-900 dark:text-white">Mind Vault & History</h3>
+            <p class="text-xs text-sanctuary-500">Your saved scribbles, crystallized thoughts, and preserved sparks.</p>
+          </div>
+        </div>
+
+        <!-- Filter category tags -->
+        <div class="flex items-center gap-2">
+          <select id="vaultFilterSelect" onchange="renderVaultGallery()" class="text-xs bg-sanctuary-100 dark:bg-sanctuary-800 rounded-xl px-3 py-1.5 border-none outline-none text-sanctuary-700 dark:text-sanctuary-300">
+            <option value="ALL">All Vault Records</option>
+            <option value="drawing">Drawings & Scribbles</option>
+            <option value="note">Text Dumps</option>
+          </select>
+          <button onclick="closeVaultModal()" class="p-2 rounded-xl text-sanctuary-400 hover:text-sanctuary-700 dark:hover:text-sanctuary-200">
+            <i class="ph-bold ph-x text-lg"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Gallery Grid -->
+      <div class="py-5 overflow-y-auto flex-1" id="vaultGalleryGrid">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div class="pt-4 border-t border-sanctuary-200 dark:border-sanctuary-800 flex items-center justify-between text-xs text-sanctuary-400">
+        <span id="vaultStatsCount">0 items stored privately in browser</span>
+        <button onclick="clearAllVault()" class="text-rose-500 hover:underline">Clear Entire Vault</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-10 opacity-0 pointer-events-none transition-all duration-300 bg-sanctuary-900 dark:bg-white text-white dark:text-sanctuary-900 px-4 py-2.5 rounded-2xl shadow-xl text-xs font-medium flex items-center gap-2">
+    <i id="toastIcon" class="ph-bold ph-check text-sage-400"></i>
+    <span id="toastMsg">Action completed</span>
+  </div>
+
+  <!-- APPLICATION LOGIC -->
+  <script>
+    /* =========================================================
+       1. STATE & GLOBAL CONFIGURATION
+       ========================================================= */
+    const STATE = {
+      theme: 'dark',
+      activeTab: 'canvas', // 'canvas' | 'write' | 'split'
+      ambient: {
+        type: null,
+        isPlaying: false,
+        volume: 0.4,
+        audioCtx: null,
+        gainNode: null,
+        sourceNode: null
+      },
+      canvas: {
+        tool: 'pen', // 'pen' | 'tangle' | 'charcoal' | 'glow' | 'eraser'
+        color: '#1f2937',
+        size: 4,
+        isDrawing: false,
+        history: [],
+        historyIndex: -1,
+        lastX: 0,
+        lastY: 0,
+        strokePoints: []
+      },
+      timer: {
+        interval: null,
+        remainingSecs: 0,
+        active: false
+      },
+      prompts: [
+        "What would you create or try if you had zero fear of looking foolish?",
+        "Scribble your current frustration as harsh, jagged lines. Then draw smooth waves around them.",
+        "What did 10-year-old you spend entire afternoons daydreaming about?",
+        "If your chaotic mind right now was an imaginary weather system, what would it look like?",
+        "Name three small things that quietly energize you even on your darkest day.",
+        "Draw an imaginary vehicle powered not by fuel, but by human curiosity.",
+        "Dump out the 5 noisy decisions taking up rent in your brain right now. Leave them here.",
+        "What is an idea so weird you haven't dared to tell anyone yet? Write or sketch it.",
+        "Draw a tight ball of tangled yarn, then trace one single thread leaving the mess into clarity.",
+        "If you could spend one year mastering any craft purely for joy, what would it be?"
+      ]
+    };
+
+    /* =========================================================
+       2. INITIALIZATION
+       ========================================================= */
+    window.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      initCanvas();
+      rollNextPrompt();
+      updateVaultBadge();
+      initFxCanvas();
+    });
+
+    /* =========================================================
+       3. THEME TOGGLE (DARK / LIGHT SANCTUARY)
+       ========================================================= */
+    function initTheme() {
+      const savedTheme = localStorage.getItem('mind_theme') || 'dark';
+      setTheme(savedTheme);
+    }
+
+    function toggleDarkMode() {
+      const nextTheme = STATE.theme === 'dark' ? 'light' : 'dark';
+      setTheme(nextTheme);
+    }
+
+    function setTheme(theme) {
+      STATE.theme = theme;
+      localStorage.setItem('mind_theme', theme);
+      const root = document.documentElement;
+      const themeIcon = document.getElementById('themeIcon');
+      
+      if (theme === 'dark') {
+        root.classList.add('dark');
+        themeIcon.className = 'ph-bold ph-sun text-lg text-amber-400';
+        if (STATE.canvas.color === '#1f2937') {
+          setCanvasColor('#f8fafc'); // Default light stroke for dark paper
+        }
+      } else {
+        root.classList.remove('dark');
+        themeIcon.className = 'ph-bold ph-moon text-lg text-sanctuary-600';
+        if (STATE.canvas.color === '#f8fafc') {
+          setCanvasColor('#1f2937'); // Default dark stroke for light paper
+        }
+      }
+      redrawCanvasFromHistory();
+    }
+
+    /* =========================================================
+       4. WORKSPACE TAB SWITCHING (CANVAS / WRITE / DUAL)
+       ========================================================= */
+    function switchMainTab(mode) {
+      STATE.activeTab = mode;
+      const grid = document.getElementById('studioGrid');
+      const canvasSec = document.getElementById('canvasSection');
+      const writeSec = document.getElementById('writeSection');
+
+      const btnCanvas = document.getElementById('tabCanvasBtn');
+      const btnWrite = document.getElementById('tabWriteBtn');
+      const btnSplit = document.getElementById('tabSplitBtn');
+
+      const activeClass = 'bg-white dark:bg-sanctuary-700 text-sanctuary-900 dark:text-white shadow-sm';
+      const inactiveClass = 'text-sanctuary-600 dark:text-sanctuary-300 hover:text-sanctuary-900';
+
+      // Reset styles
+      [btnCanvas, btnWrite, btnSplit].forEach(btn => {
+        if(btn) btn.className = btn.className.replace(activeClass, '').replace(inactiveClass, '') + ' ' + inactiveClass;
+      });
+
+      if (mode === 'canvas') {
+        btnCanvas.className = btnCanvas.className.replace(inactiveClass, '') + ' ' + activeClass;
+        grid.className = 'flex-1 grid grid-cols-1 gap-4 min-h-[580px]';
+        canvasSec.classList.remove('hidden');
+        writeSec.classList.add('hidden');
+      } else if (mode === 'write') {
+        btnWrite.className = btnWrite.className.replace(inactiveClass, '') + ' ' + activeClass;
+        grid.className = 'flex-1 grid grid-cols-1 gap-4 min-h-[580px]';
+        canvasSec.classList.add('hidden');
+        writeSec.classList.remove('hidden');
+      } else if (mode === 'split') {
+        btnSplit.className = btnSplit.className.replace(inactiveClass, '') + ' ' + activeClass;
+        grid.className = 'flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 min-h-[580px]';
+        canvasSec.classList.remove('hidden');
+        writeSec.classList.remove('hidden');
+      }
+
+      // Resize canvas after display layout changes
+      setTimeout(resizeCanvas, 50);
+    }
+
+    /* =========================================================
+       5. DRAWING & SCRIBBLE ENGINE
+       ========================================================= */
+    let canvas, ctx;
+
+    function initCanvas() {
+      canvas = document.getElementById('paintCanvas');
+      ctx = canvas.getContext('2d');
+      
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      // Mouse & Pointer Events
+      canvas.addEventListener('pointerdown', startDrawing);
+      canvas.addEventListener('pointermove', drawMove);
+      canvas.addEventListener('pointerup', endDrawing);
+      canvas.addEventListener('pointercancel', endDrawing);
+
+      // Push initial blank state
+      saveCanvasState();
+    }
+
+    function resizeCanvas() {
+      const container = document.getElementById('canvasContainer');
+      if (!container || !canvas) return;
+
+      const rect = container.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+
+      // Preserve image data during resize
+      let tempCanvas = null;
+      if (canvas.width > 0 && canvas.height > 0) {
+        tempCanvas = document.createElement('canvas');
+        tempCanvas.width = canvas.width;
+        tempCanvas.height = canvas.height;
+        const tempCtx = tempCanvas.getContext('2d');
+        tempCtx.drawImage(canvas, 0, 0);
+      }
+
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+      canvas.style.width = `${rect.width}px`;
+      canvas.style.height = `${rect.height}px`;
+
+      if (tempCanvas) {
+        ctx.drawImage(tempCanvas, 0, 0, rect.width, rect.height);
+      }
+    }
+
+    function getCoords(e) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+        pressure: e.pressure && e.pressure > 0 ? e.pressure : 0.5
+      };
+    }
+
+    function startDrawing(e) {
+      e.preventDefault();
+      STATE.canvas.isDrawing = true;
+      const { x, y } = getCoords(e);
+      STATE.canvas.lastX = x;
+      STATE.canvas.lastY = y;
+      STATE.canvas.strokePoints = [{ x, y }];
+
+      // Hide empty watermark hint
+      document.getElementById('canvasEmptyHint').style.display = 'none';
+
+      // Start specific tool stroke
+      if (STATE.canvas.tool === 'tangle') {
+        playPencilSound();
+      }
+    }
+
+    function drawMove(e) {
+      if (!STATE.canvas.isDrawing) return;
+      e.preventDefault();
+
+      const { x, y, pressure } = getCoords(e);
+      const tool = STATE.canvas.tool;
+      const color = STATE.canvas.color;
+      const baseSize = STATE.canvas.size;
+
+      ctx.save();
+
+      if (tool === 'eraser') {
+        // Destination out for clean erase
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.beginPath();
+        ctx.arc(x, y, baseSize * 2.5, 0, Math.PI * 2);
+        ctx.fill();
+      } 
+      else if (tool === 'pen') {
+        // Smooth expressive stroke
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.strokeStyle = color;
+        ctx.lineWidth = Math.max(1, baseSize * (pressure * 1.5));
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        ctx.beginPath();
+        ctx.moveTo(STATE.canvas.lastX, STATE.canvas.lastY);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+      } 
+      else if (tool === 'tangle') {
+        // Chaotic release tangle: adds slight jittered harmonic tendrils
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.strokeStyle = color;
+        ctx.lineWidth = Math.max(0.7, baseSize * 0.7);
+        ctx.lineCap = 'round';
+
+        // Main line
+        ctx.beginPath();
+        ctx.moveTo(STATE.canvas.lastX, STATE.canvas.lastY);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+
+        // Chaotic jitter strands (mental tangle release)
+        const dx = x - STATE.canvas.lastX;
+        const dy = y - STATE.canvas.lastY;
+        const speed = Math.sqrt(dx * dx + dy * dy);
+
+        if (speed > 2) {
+          ctx.beginPath();
+          const jitterX = (Math.random() - 0.5) * (baseSize * 4);
+          const jitterY = (Math.random() - 0.5) * (baseSize * 4);
+          ctx.strokeStyle = adjustColorAlpha(color, 0.4);
+          ctx.lineWidth = 0.8;
+          ctx.moveTo(STATE.canvas.lastX + jitterX, STATE.canvas.lastY + jitterY);
+          ctx.lineTo(x - jitterX, y - jitterY);
+          ctx.stroke();
+        }
+      } 
+      else if (tool === 'charcoal') {
+        // Soft textured charcoal spray
+        ctx.globalCompositeOperation = 'source-over';
+        const density = Math.min(30, baseSize * 2);
+        ctx.fillStyle = adjustColorAlpha(color, 0.15);
+
+        for (let i = 0; i < density; i++) {
+          const offsetX = (Math.random() - 0.5) * (baseSize * 3);
+          const offsetY = (Math.random() - 0.5) * (baseSize * 3);
+          const radius = Math.random() * 1.5;
+          ctx.beginPath();
+          ctx.arc(x + offsetX, y + offsetY, radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      } 
+      else if (tool === 'glow') {
+        // Passion Neon Glow Brush
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.strokeStyle = color;
+        ctx.shadowColor = color;
+        ctx.shadowBlur = baseSize * 3;
+        ctx.lineWidth = baseSize;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        ctx.beginPath();
+        ctx.moveTo(STATE.canvas.lastX, STATE.canvas.lastY);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+      }
+
+      ctx.restore();
+
+      STATE.canvas.lastX = x;
+      STATE.canvas.lastY = y;
+      STATE.canvas.strokePoints.push({ x, y });
+    }
+
+    function endDrawing() {
+      if (!STATE.canvas.isDrawing) return;
+      STATE.canvas.isDrawing = false;
+      saveCanvasState();
+    }
+
+    function adjustColorAlpha(hex, alpha) {
+      if (hex.startsWith('#')) {
+        let r = parseInt(hex.slice(1, 3), 16) || 0;
+        let g = parseInt(hex.slice(3, 5), 16) || 0;
+        let b = parseInt(hex.slice(5, 7), 16) || 0;
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      }
+      return hex;
+    }
+
+    function setCanvasTool(toolName) {
+      STATE.canvas.tool = toolName;
+      document.querySelectorAll('.tool-btn').forEach(btn => {
+        btn.className = 'tool-btn p-2 rounded-xl text-xs font-medium text-sanctuary-600 dark:text-sanctuary-300 hover:text-sanctuary-900';
+      });
+      const activeEl = document.getElementById(`tool-${toolName}`);
+      if (activeEl) {
+        activeEl.className = 'tool-btn p-2 rounded-xl text-xs font-medium bg-white dark:bg-sanctuary-700 text-sanctuary-900 dark:text-white shadow-xs';
+      }
+      showToast(`Selected ${toolName.charAt(0).toUpperCase() + toolName.slice(1)} tool`);
+    }
+
+    function setCanvasColor(hex) {
+      STATE.canvas.color = hex;
+      document.querySelectorAll('.color-dot').forEach(dot => {
+        if (dot.dataset.color && dot.dataset.color.toLowerCase() === hex.toLowerCase()) {
+          dot.classList.add('scale-125', 'ring-2', 'ring-sage-500');
+        } else {
+          dot.classList.remove('scale-125', 'ring-2', 'ring-sage-500');
+        }
+      });
+    }
+
+    function updateBrushSize(val) {
+      STATE.canvas.size = parseInt(val, 10);
+      document.getElementById('brushSizeVal').textContent = val;
+    }
+
+    /* Undo / Redo Stack */
+    function saveCanvasState() {
+      // Discard redo forward history
+      if (STATE.canvas.historyIndex < STATE.canvas.history.length - 1) {
+        STATE.canvas.history = STATE.canvas.history.slice(0, STATE.canvas.historyIndex + 1);
+      }
+      
+      const dataUrl = canvas.toDataURL();
+      STATE.canvas.history.push(dataUrl);
+      if (STATE.canvas.history.length > 25) {
+        STATE.canvas.history.shift();
+      } else {
+        STATE.canvas.historyIndex++;
+      }
+    }
+
+    function undoCanvas() {
+      if (STATE.canvas.historyIndex > 0) {
+        STATE.canvas.historyIndex--;
+        restoreCanvasState(STATE.canvas.history[STATE.canvas.historyIndex]);
+        showToast('Canvas Undone');
+      }
+    }
+
+    function redoCanvas() {
+      if (STATE.canvas.historyIndex < STATE.canvas.history.length - 1) {
+        STATE.canvas.historyIndex++;
+        restoreCanvasState(STATE.canvas.history[STATE.canvas.historyIndex]);
+        showToast('Canvas Redone');
+      }
+    }
+
+    function restoreCanvasState(dataUrl) {
+      const img = new Image();
+      img.onload = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const rect = canvas.getBoundingClientRect();
+        ctx.drawImage(img, 0, 0, rect.width, rect.height);
+      };
+      img.src = dataUrl;
+    }
+
+    function redrawCanvasFromHistory() {
+      if (STATE.canvas.historyIndex >= 0 && STATE.canvas.history[STATE.canvas.historyIndex]) {
+        restoreCanvasState(STATE.canvas.history[STATE.canvas.historyIndex]);
+      }
+    }
+
+    /* Release / Let Go Cathartic Action */
+    function triggerCanvasRelease() {
+      // Trigger bursting particle cloud over canvas
+      const rect = canvas.getBoundingClientRect();
+      createParticleBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 80, '#759b75');
+
+      // Fade canvas softly
+      let opacity = 1;
+      const fadeInterval = setInterval(() => {
+        opacity -= 0.1;
+        if (opacity <= 0) {
+          clearInterval(fadeInterval);
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          saveCanvasState();
+          document.getElementById('canvasEmptyHint').style.display = 'flex';
+          showToast('Released into the ether. Mind is lighter.');
+        } else {
+          ctx.save();
+          ctx.globalAlpha = 0.15;
+          ctx.fillStyle = STATE.theme === 'dark' ? '#171614' : '#F8F7F4';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.restore();
+        }
+      }, 30);
+    }
+
+    function downloadCanvasPNG() {
+      const link = document.createElement('a');
+      link.download = `mind-unwind-canvas-${Date.now()}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      showToast('Artwork saved to Downloads');
+    }
+
+    /* =========================================================
+       6. STREAM OF CONSCIOUSNESS WRITING & BURN RELEASE
+       ========================================================= */
+    function handleTextInput(el) {
+      const text = el.value;
+      const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+      const chars = text.length;
+
+      document.getElementById('wordCount').textContent = `${words} words`;
+      document.getElementById('charCount').textContent = `${chars} characters`;
+    }
+
+    /* Timed Mind-Dump Mode */
+    function startDumpTimer(seconds) {
+      stopDumpTimer();
+      STATE.timer.active = true;
+      STATE.timer.remainingSecs = seconds;
+      
+      const timerDisplay = document.getElementById('timerDisplay');
+      const stopBtn = document.getElementById('stopTimerBtn');
+      stopBtn.classList.remove('hidden');
+
+      const updateDisplay = () => {
+        const m = Math.floor(STATE.timer.remainingSecs / 60);
+        const s = STATE.timer.remainingSecs % 60;
+        timerDisplay.textContent = `${m}:${s < 10 ? '0' : ''}${s} left`;
+      };
+
+      updateDisplay();
+      showToast(`Started ${seconds / 60}-minute raw flow. Do not edit, just type.`);
+
+      STATE.timer.interval = setInterval(() => {
+        STATE.timer.remainingSecs--;
+        if (STATE.timer.remainingSecs <= 0) {
+          stopDumpTimer();
+          timerDisplay.textContent = 'Sprint Complete ✨';
+          showToast('Time is up! Great release of thoughts.');
+          createParticleBurst(window.innerWidth / 2, window.innerHeight / 2, 60, '#9483c6');
+        } else {
+          updateDisplay();
+        }
+      }, 1000);
+    }
+
+    function stopDumpTimer() {
+      if (STATE.timer.interval) {
+        clearInterval(STATE.timer.interval);
+        STATE.timer.interval = null;
+      }
+      STATE.timer.active = false;
+      document.getElementById('timerDisplay').textContent = 'Free Flow';
+      document.getElementById('stopTimerBtn').classList.add('hidden');
+    }
+
+    /* Burn / Vanish Release */
+    function burnTextDissolve() {
+      const textarea = document.getElementById('mindDumpInput');
+      const val = textarea.value.trim();
+      if (!val) {
+        showToast('Nothing to burn. Type some overthinking first.');
+        return;
+      }
+
+      // Add visual fire particles across textarea area
+      const rect = textarea.getBoundingClientRect();
+      createParticleBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 100, '#ea580c');
+
+      // Add CSS burning animation
+      textarea.classList.add('burn-animation');
+
+      setTimeout(() => {
+        textarea.value = '';
+        handleTextInput(textarea);
+        textarea.classList.remove('burn-animation');
+        showToast('Your thoughts were transmuted into smoke and released.');
+      }, 1800);
+    }
+
+    /* =========================================================
+       7. PASSION & INSIGHT MINER (CLIENT-SIDE NLP ANALYZER)
+       ========================================================= */
+    const PASSION_THEMES = {
+      "Building & Craft": ['build', 'create', 'make', 'code', 'design', 'craft', 'invent', 'draw', 'tool', 'hardware', 'software', 'wood', 'canvas', 'sketch', 'sculpt', 'prototype', 'architecture'],
+      "Storytelling & Expression": ['write', 'story', 'voice', 'sing', 'words', 'speak', 'podcast', 'book', 'film', 'poetry', 'lyric', 'message', 'share', 'connect', 'video'],
+      "Curiosity & Discovery": ['learn', 'explore', 'read', 'understand', 'nature', 'astronomy', 'stars', 'history', 'science', 'universe', 'travel', 'mystery', 'why', 'investigate', 'research'],
+      "Compassion & Community": ['help', 'heal', 'community', 'people', 'friend', 'listen', 'support', 'teach', 'guide', 'children', 'animals', 'care', 'empathy', 'love', 'kindness'],
+      "Adventure & Movement": ['run', 'mountain', 'walk', 'ocean', 'breathe', 'sea', 'fly', 'climb', 'travel', 'wander', 'forest', 'wild', 'bike', 'freedom', 'open']
+    };
+
+    const STOP_WORDS = new Set([
+      'the','and','to','a','of','in','i','it','is','that','you','this','my','for','on','with','they','be','at',
+      'have','from','or','an','by','what','me','as','do','so','was','but','not','we','all','can','if','just',
+      'about','up','out','like','there','been','would','could','should','now','than','then','their','them'
+    ]);
+
+    function openPassionMiner() {
+      const text = document.getElementById('mindDumpInput').value;
+      const modal = document.getElementById('passionMinerModal');
+      const container = document.getElementById('minerResultsContainer');
+
+      // Run analysis
+      const analysis = analyzeContent(text);
+      container.innerHTML = renderAnalysisHTML(analysis);
+
+      modal.classList.remove('hidden');
+      setTimeout(() => modal.classList.remove('opacity-0'), 10);
+    }
+
+    function closePassionMiner() {
+      const modal = document.getElementById('passionMinerModal');
+      modal.classList.add('opacity-0');
+      setTimeout(() => modal.classList.add('hidden'), 300);
+    }
+
+    function analyzeContent(rawText) {
+      if (!rawText || rawText.trim().length < 20) {
+        return { empty: true };
+      }
+
+      // Word Tokenization & Frequency
+      const words = rawText.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(w => w.length > 2 && !STOP_WORDS.has(w));
+      const freq = {};
+      words.forEach(w => freq[w] = (freq[w] || 0) + 1);
+
+      // Top recurring significant words
+      const topWords = Object.entries(freq)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 8);
+
+      // Category / Passion theme matching
+      const themeScores = {};
+      for (const [theme, keywords] of Object.entries(PASSION_THEMES)) {
+        themeScores[theme] = 0;
+        keywords.forEach(kw => {
+          if (rawText.toLowerCase().includes(kw)) {
+            themeScores[theme] += 1;
+          }
+        });
+      }
+
+      const dominantTheme = Object.entries(themeScores).sort((a,b) => b[1] - a[1])[0];
+
+      // Reflection prompts based on findings
+      let reflectivePrompt = "What would happen if you gave this thought 30 minutes of intentional action this weekend?";
+      if (dominantTheme && dominantTheme[1] > 0) {
+        if (dominantTheme[0] === 'Building & Craft') {
+          reflectivePrompt = "You keep orbiting creation and invention. What is the smallest physical prototype you can shape in 1 hour?";
+        } else if (dominantTheme[0] === 'Storytelling & Expression') {
+          reflectivePrompt = "Your subconscious is carrying a narrative. Who needs to hear this story the most?";
+        } else if (dominantTheme[0] === 'Curiosity & Discovery') {
+          reflectivePrompt = "Curiosity is an instinct pointing to your next chapter. What unanswered question won't leave you alone?";
+        }
+      }
+
+      return {
+        empty: false,
+        wordCount: words.length,
+        topWords,
+        dominantTheme: dominantTheme && dominantTheme[1] > 0 ? dominantTheme[0] : 'Freeform Introspection',
+        themeScore: dominantTheme ? dominantTheme[1] : 0,
+        reflectivePrompt
+      };
+    }
+
+    function renderAnalysisHTML(analysis) {
+      if (analysis.empty) {
+        return `
+          <div class="text-center py-12 px-4">
+            <div class="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-900/30 text-amber-500 mx-auto flex items-center justify-center mb-3">
+              <i class="ph-bold ph-feather text-2xl"></i>
+            </div>
+            <h4 class="font-semibold text-sanctuary-800 dark:text-sanctuary-100 text-sm">Need More Substance to Mine</h4>
+            <p class="text-xs text-sanctuary-500 max-w-sm mx-auto mt-1 leading-relaxed">
+              Pour out at least 2 or 3 unedited sentences in the Stream of Thought writer. The miner will scan for recurring anchors and passion triggers.
+            </p>
+          </div>
+        `;
+      }
+
+      return `
+        <!-- Dominant Affinity -->
+        <div class="p-4 rounded-2xl bg-sage-50 dark:bg-sage-950/40 border border-sage-200 dark:border-sage-800 flex items-start gap-3">
+          <div class="w-9 h-9 rounded-xl bg-sage-500 text-white flex items-center justify-center shrink-0">
+            <i class="ph-bold ph-trend-up text-lg"></i>
+          </div>
+          <div>
+            <span class="text-[10px] uppercase font-bold tracking-wider text-sage-600 dark:text-sage-400">Emerging Core Affinity</span>
+            <h4 class="text-base font-semibold text-sanctuary-900 dark:text-white mt-0.5">${analysis.dominantTheme}</h4>
+            <p class="text-xs text-sanctuary-600 dark:text-sanctuary-300 mt-1">
+              Your words consistently gravitate towards this energy. It indicates where your vitality goes when mental defenses are lowered.
+            </p>
+          </div>
+        </div>
+
+        <!-- Word Cloud Pills -->
+        <div>
+          <label class="text-xs font-semibold uppercase tracking-wider text-sanctuary-400 mb-2 block">Recurring Resonance Anchors</label>
+          <div class="flex flex-wrap gap-2">
+            ${analysis.topWords.map(([w, count]) => `
+              <span class="px-3 py-1.5 rounded-xl bg-sanctuary-100 dark:bg-sanctuary-800 text-sanctuary-800 dark:text-sanctuary-200 text-xs font-medium flex items-center gap-1.5 border border-sanctuary-200/60 dark:border-sanctuary-700/60">
+                <span class="text-sage-500 font-bold">#</span>${w}
+                <span class="text-[10px] px-1.5 py-0.2 rounded-full bg-sanctuary-200 dark:bg-sanctuary-700 text-sanctuary-500">${count}</span>
+              </span>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Reflective Inquiry -->
+        <div class="p-4 rounded-2xl bg-lavender-50 dark:bg-lavender-950/40 border border-lavender-200 dark:border-lavender-900">
+          <div class="flex items-center gap-2 text-lavender-700 dark:text-lavender-300 text-xs font-semibold mb-1">
+            <i class="ph-bold ph-question"></i>
+            <span>Catalyst Question for You</span>
+          </div>
+          <p class="text-sm font-handwriting text-xl text-sanctuary-800 dark:text-sanctuary-200 italic">
+            "${analysis.reflectivePrompt}"
+          </p>
+        </div>
+      `;
+    }
+
+    function copyInsightsToClipboard() {
+      const container = document.getElementById('minerResultsContainer');
+      const text = container.innerText || container.textContent;
+      
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        showToast('Clarity snapshot copied to clipboard');
+      } catch (err) {
+        showToast('Unable to copy');
+      }
+      document.body.removeChild(textArea);
+    }
+
+    /* =========================================================
+       8. PASSION SPARKS & PROMPT GENERATOR
+       ========================================================= */
+    function rollNextPrompt() {
+      const idx = Math.floor(Math.random() * STATE.prompts.length);
+      const promptEl = document.getElementById('promptDisplay');
+      promptEl.style.opacity = '0';
+      setTimeout(() => {
+        promptEl.textContent = `"${STATE.prompts[idx]}"`;
+        promptEl.style.opacity = '1';
+      }, 150);
+    }
+
+    /* =========================================================
+       9. VAULT (LOCAL STORAGE REPOSITORY)
+       ========================================================= */
+    function saveCanvasToVault() {
+      const dataUrl = canvas.toDataURL('image/png');
+      const entry = {
+        id: 'canvas_' + Date.now(),
+        type: 'drawing',
+        title: 'Scribble & Sketch',
+        category: 'Raw Chaos / Art',
+        date: new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+        data: dataUrl
+      };
+
+      storeVaultItem(entry);
+      showToast('Drawing preserved in Vault');
+    }
+
+    function saveJournalEntry() {
+      const textarea = document.getElementById('mindDumpInput');
+      const text = textarea.value.trim();
+      if (!text) {
+        showToast('Nothing to preserve. Type your thoughts first.');
+        return;
+      }
+
+      const category = document.getElementById('entryCategory').value;
+      const entry = {
+        id: 'note_' + Date.now(),
+        type: 'note',
+        title: text.slice(0, 32) + (text.length > 32 ? '...' : ''),
+        category: category,
+        date: new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+        data: text
+      };
+
+      storeVaultItem(entry);
+      showToast('Thought archived in Vault');
+    }
+
+    function getVaultData() {
+      try {
+        return JSON.parse(localStorage.getItem('mind_vault_entries') || '[]');
+      } catch(e) {
+        return [];
+      }
+    }
+
+    function storeVaultItem(item) {
+      const current = getVaultData();
+      current.unshift(item);
+      localStorage.setItem('mind_vault_entries', JSON.stringify(current));
+      updateVaultBadge();
+    }
+
+    function updateVaultBadge() {
+      const items = getVaultData();
+      const badge = document.getElementById('vaultBadge');
+      if (items.length > 0) {
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    function openVaultModal() {
+      const modal = document.getElementById('vaultModal');
+      renderVaultGallery();
+      modal.classList.remove('hidden');
+      setTimeout(() => modal.classList.remove('opacity-0'), 10);
+    }
+
+    function closeVaultModal() {
+      const modal = document.getElementById('vaultModal');
+      modal.classList.add('opacity-0');
+      setTimeout(() => modal.classList.add('hidden'), 300);
+    }
+
+    function renderVaultGallery() {
+      const filter = document.getElementById('vaultFilterSelect').value;
+      const grid = document.getElementById('vaultGalleryGrid');
+      const items = getVaultData();
+
+      const filtered = items.filter(it => filter === 'ALL' || it.type === filter);
+      document.getElementById('vaultStatsCount').textContent = `${items.length} items stored in private local vault`;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="text-center py-16">
+            <i class="ph-bold ph-tray text-4xl text-sanctuary-400 mb-2"></i>
+            <p class="text-sm font-semibold text-sanctuary-700 dark:text-sanctuary-300">Vault is Empty</p>
+            <p class="text-xs text-sanctuary-400 mt-1">Save a drawing or stream-of-thought to access it later here.</p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4";
+      grid.innerHTML = filtered.map(item => {
+        if (item.type === 'drawing') {
+          return `
+            <div class="group relative bg-white dark:bg-sanctuary-800 border border-sanctuary-200 dark:border-sanctuary-700/80 rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col">
+              <div class="h-44 w-full bg-sanctuary-100 dark:bg-sanctuary-950 flex items-center justify-center overflow-hidden p-2">
+                <img src="${item.data}" alt="Saved Canvas" class="max-h-full max-w-full object-contain rounded-lg">
+              </div>
+              <div class="p-3.5 flex flex-col justify-between flex-1">
+                <div>
+                  <div class="flex items-center justify-between gap-1 mb-1">
+                    <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md bg-sage-100 dark:bg-sage-900/40 text-sage-700 dark:text-sage-300">${item.category}</span>
+                    <span class="text-[11px] text-sanctuary-400">${item.date}</span>
+                  </div>
+                  <h5 class="text-xs font-semibold text-sanctuary-900 dark:text-white">${item.title}</h5>
+                </div>
+                <div class="flex items-center justify-end gap-1.5 pt-3 border-t border-sanctuary-100 dark:border-sanctuary-700/60 mt-3">
+                  <a href="${item.data}" download="${item.id}.png" class="p-1.5 rounded-lg text-sanctuary-500 hover:text-sanctuary-900 dark:hover:text-white" title="Download">
+                    <i class="ph-bold ph-download-simple"></i>
+                  </a>
+                  <button onclick="deleteVaultItem('${item.id}')" class="p-1.5 rounded-lg text-rose-400 hover:text-rose-600" title="Delete">
+                    <i class="ph-bold ph-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        } else {
+          return `
+            <div class="group relative bg-white dark:bg-sanctuary-800 border border-sanctuary-200 dark:border-sanctuary-700/80 rounded-2xl p-4 shadow-xs hover:shadow-md transition-all flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between gap-1 mb-2">
+                  <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md bg-lavender-100 dark:bg-lavender-900/40 text-lavender-700 dark:text-lavender-300">${item.category}</span>
+                  <span class="text-[11px] text-sanctuary-400">${item.date}</span>
+                </div>
+                <p class="text-xs text-sanctuary-700 dark:text-sanctuary-200 line-clamp-5 leading-relaxed font-sans">
+                  ${escapeHTML(item.data)}
+                </p>
+              </div>
+              <div class="flex items-center justify-between pt-3 border-t border-sanctuary-100 dark:border-sanctuary-700/60 mt-3">
+                <button onclick="restoreNoteToWriter('${item.id}')" class="text-xs text-sage-600 dark:text-sage-400 font-medium hover:underline">
+                  Load in Studio
+                </button>
+                <button onclick="deleteVaultItem('${item.id}')" class="p-1.5 rounded-lg text-rose-400 hover:text-rose-600" title="Delete">
+                  <i class="ph-bold ph-trash"></i>
+                </button>
+              </div>
+            </div>
+          `;
+        }
+      }).join('');
+    }
+
+    function deleteVaultItem(id) {
+      const items = getVaultData().filter(it => it.id !== id);
+      localStorage.setItem('mind_vault_entries', JSON.stringify(items));
+      renderVaultGallery();
+      updateVaultBadge();
+      showToast('Item deleted from Vault');
+    }
+
+    function clearAllVault() {
+      if (confirm('Clear your entire vault history? This cannot be undone.')) {
+        localStorage.removeItem('mind_vault_entries');
+        renderVaultGallery();
+        updateVaultBadge();
+        showToast('Vault cleared');
+      }
+    }
+
+    function restoreNoteToWriter(id) {
+      const item = getVaultData().find(it => it.id === id);
+      if (item && item.type === 'note') {
+        document.getElementById('mindDumpInput').value = item.data;
+        handleTextInput(document.getElementById('mindDumpInput'));
+        closeVaultModal();
+        switchMainTab('write');
+        showToast('Restored note to writer');
+      }
+    }
+
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+      }[tag] || tag));
+    }
+
+    /* =========================================================
+       10. PROCEDURAL CALMING AMBIENCE (WEB AUDIO API - NO EXTERNAL AUDIO URLS)
+       ========================================================= */
+    function toggleSoundMenu() {
+      const pop = document.getElementById('ambientPopover');
+      pop.classList.toggle('hidden');
+    }
+
+    function getAudioContext() {
+      if (!STATE.ambient.audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        STATE.ambient.audioCtx = new AudioContext();
+      }
+      if (STATE.ambient.audioCtx.state === 'suspended') {
+        STATE.ambient.audioCtx.resume();
+      }
+      return STATE.ambient.audioCtx;
+    }
+
+    function playAmbient(type) {
+      stopAmbient();
+      const ctx = getAudioContext();
+      STATE.ambient.type = type;
+      STATE.ambient.isPlaying = true;
+
+      // Gain master
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(STATE.ambient.volume, ctx.currentTime);
+      gain.connect(ctx.destination);
+      STATE.ambient.gainNode = gain;
+
+      const bufferSize = ctx.sampleRate * 2;
+      const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+
+      // Generate Pink / Brown Noise for natural texture
+      let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        b0 = 0.99886 * b0 + white * 0.0555179;
+        b1 = 0.99332 * b1 + white * 0.0750759;
+        b2 = 0.96900 * b2 + white * 0.1538520;
+        b3 = 0.86650 * b3 + white * 0.3104856;
+        b4 = 0.55000 * b4 + white * 0.5329522;
+        b5 = -0.7616 * b5 - white * 0.0168980;
+        output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+        output[i] *= 0.11;
+        b6 = white * 0.115926;
+      }
+
+      const whiteNoiseSource = ctx.createBufferSource();
+      whiteNoiseSource.buffer = noiseBuffer;
+      whiteNoiseSource.loop = true;
+
+      // Filter modulation tailored per soundscape
+      const filter = ctx.createBiquadFilter();
+      
+      if (type === 'rain') {
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(900, ctx.currentTime);
+        filter.Q.setValueAtTime(1.0, ctx.currentTime);
+      } else if (type === 'stream') {
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(650, ctx.currentTime);
+        filter.Q.setValueAtTime(2.5, ctx.currentTime);
+      } else if (type === 'hearth') {
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(450, ctx.currentTime);
+        filter.Q.setValueAtTime(4, ctx.currentTime);
+      } else { // whitenoise
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1200, ctx.currentTime);
+      }
+
+      whiteNoiseSource.connect(filter);
+      filter.connect(gain);
+      whiteNoiseSource.start();
+
+      STATE.ambient.sourceNode = whiteNoiseSource;
+
+      // UI updates
+      document.getElementById('ambientIcon').className = 'ph-bold ph-speaker-high text-lg text-sage-500';
+      document.getElementById('soundLabel').textContent = `Ambient: ${capitalize(type)}`;
+      toggleSoundMenu();
+      showToast(`Playing ambient ${type}`);
+    }
+
+    function stopAmbient() {
+      if (STATE.ambient.sourceNode) {
+        try {
+          STATE.ambient.sourceNode.stop();
+          STATE.ambient.sourceNode.disconnect();
+        } catch(e) {}
+        STATE.ambient.sourceNode = null;
+      }
+      STATE.ambient.isPlaying = false;
+      STATE.ambient.type = null;
+      document.getElementById('ambientIcon').className = 'ph-bold ph-speaker-slash text-lg';
+      document.getElementById('soundLabel').textContent = 'Ambient: Off';
+    }
+
+    function setAmbientVolume(val) {
+      STATE.ambient.volume = parseFloat(val);
+      document.getElementById('volVal').textContent = `${Math.round(val * 100)}%`;
+      if (STATE.ambient.gainNode && STATE.ambient.audioCtx) {
+        STATE.ambient.gainNode.gain.setValueAtTime(STATE.ambient.volume, STATE.ambient.audioCtx.currentTime);
+      }
+    }
+
+    function playPencilSound() {
+      // Subtle tactile audio feedback
+      try {
+        const ctx = getAudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(140 + Math.random() * 40, ctx.currentTime);
+        gain.gain.setValueAtTime(0.015, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.04);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.05);
+      } catch(e) {}
+    }
+
+    function capitalize(s) {
+      return s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
+    }
+
+    /* =========================================================
+       11. ETHEREAL PARTICLE BURST CANVAS (FOR RELEASE & JOY)
+       ========================================================= */
+    let fxCanvas, fxCtx;
+    let particles = [];
+
+    function initFxCanvas() {
+      fxCanvas = document.getElementById('fxCanvas');
+      fxCtx = fxCanvas.getContext('2d');
+      resizeFxCanvas();
+      window.addEventListener('resize', resizeFxCanvas);
+      requestAnimationFrame(particleLoop);
+    }
+
+    function resizeFxCanvas() {
+      if (!fxCanvas) return;
+      fxCanvas.width = window.innerWidth;
+      fxCanvas.height = window.innerHeight;
+    }
+
+    function createParticleBurst(x, y, count, baseColor) {
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 1.5 + Math.random() * 5.5;
+        particles.push({
+          x,
+          y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 1.2,
+          radius: 2 + Math.random() * 3.5,
+          alpha: 1,
+          decay: 0.012 + Math.random() * 0.02,
+          color: baseColor
+        });
+      }
+    }
+
+    function particleLoop() {
+      fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.04; // Gentle gravity
+        p.alpha -= p.decay;
+
+        if (p.alpha <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        fxCtx.save();
+        fxCtx.globalAlpha = p.alpha;
+        fxCtx.fillStyle = p.color;
+        fxCtx.beginPath();
+        fxCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        fxCtx.fill();
+        fxCtx.restore();
+      }
+
+      requestAnimationFrame(particleLoop);
+    }
+
+    /* =========================================================
+       12. TOAST ALERTS (Zero disruptive window alerts)
+       ========================================================= */
+    let toastTimeout = null;
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      toastMsg.textContent = msg;
+
+      toast.classList.remove('opacity-0', 'translate-y-10');
+      toast.classList.add('opacity-100', 'translate-y-0');
+
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-10');
+      }, 2600);
+    }
+  </script>
+</body>
+</html>
