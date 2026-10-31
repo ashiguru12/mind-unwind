@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindUnwind - Sanctuary & Mental Dump</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #121316;
+      --bg-surface: #1a1c23;
+      --bg-surface-elevated: #242731;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(167, 139, 250, 0.4);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --text-subtle: #6b7280;
+      --accent-sage: #94d2bd;
+      --accent-lavender: #c4b5fd;
+      --accent-rose: #f472b6;
+      --accent-amber: #f59e0b;
+      --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+      --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.4);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #f6f5f1;
+      --bg-surface: #ffffff;
+      --bg-surface-elevated: #eceae3;
+      --border: rgba(0, 0, 0, 0.08);
+      --border-focus: rgba(124, 58, 237, 0.35);
+      --text-main: #1f2937;
+      --text-muted: #4b5563;
+      --text-subtle: #9ca3af;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      overflow-x: hidden;
+    }
+
+    header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.85rem 1.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(12px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, var(--accent-lavender), var(--accent-sage));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #121316;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .brand h1 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .brand span {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-left: 0.4rem;
+      font-weight: 400;
+      padding: 2px 7px;
+      border-radius: 20px;
+      background: var(--bg-surface-elevated);
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 0.5rem 0.9rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .nav-btn:hover {
+      color: var(--text-main);
+      background: var(--bg-surface-elevated);
+    }
+
+    .nav-btn.active {
+      color: var(--text-main);
+      background: var(--bg-surface-elevated);
+      border-color: var(--border);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .icon-btn {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .icon-btn:hover {
+      color: var(--text-main);
+      border-color: var(--border-focus);
+    }
+
+    .audio-btn.playing {
+      color: var(--accent-sage);
+      border-color: var(--accent-sage);
+      animation: pulse-ring 2s infinite;
+    }
+
+    @keyframes pulse-ring {
+      0% { box-shadow: 0 0 0 0 rgba(148, 210, 189, 0.4); }
+      70% { box-shadow: 0 0 0 6px rgba(148, 210, 189, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(148, 210, 189, 0); }
+    }
+
+    main {
+      flex: 1;
+      max-width: 1300px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tab-content {
+      display: none;
+      height: 100%;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Scribble Canvas View */
+    .canvas-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      height: 100%;
+    }
+
+    .canvas-toolbar {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.65rem 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .tool-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .tool-chip {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 0.4rem 0.8rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.15s ease;
+    }
+
+    .tool-chip:hover {
+      color: var(--text-main);
+    }
+
+    .tool-chip.active {
+      background: var(--accent-lavender);
+      color: #121316;
+      border-color: var(--accent-lavender);
+      font-weight: 600;
+    }
+
+    .color-picker-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .color-swatch {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.15s;
+    }
+
+    .color-swatch:hover {
+      transform: scale(1.15);
+    }
+
+    .color-swatch.active {
+      border-color: var(--text-main);
+      transform: scale(1.1);
+    }
+
+    .canvas-container {
+      position: relative;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      height: 70vh;
+      min-height: 520px;
+      overflow: hidden;
+      touch-action: none;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+    }
+
+    .canvas-overlay-catharsis {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .canvas-bottom-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0.25rem;
+      font-size: 0.82rem;
+      color: var(--text-subtle);
+    }
+
+    /* Burn/Release Button */
+    .btn-catharsis {
+      background: linear-gradient(135deg, rgba(244, 114, 182, 0.15), rgba(196, 181, 253, 0.15));
+      border: 1px solid rgba(244, 114, 182, 0.3);
+      color: var(--accent-rose);
+      padding: 0.45rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-catharsis:hover {
+      background: var(--accent-rose);
+      color: #121316;
+      box-shadow: 0 4px 15px rgba(244, 114, 182, 0.35);
+    }
+
+    /* Journal/Mind Dump View */
+    .journal-layout {
+      max-width: 820px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .journal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 0.5rem;
+    }
+
+    .timer-group {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .timer-pill {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 0.35rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .timer-pill.active {
+      border-color: var(--accent-amber);
+      color: var(--accent-amber);
+      background: rgba(245, 158, 11, 0.1);
+    }
+
+    .journal-box {
+      position: relative;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem 2.5rem;
+      box-shadow: var(--shadow-lg);
+      min-height: 480px;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.25s ease;
+    }
+
+    .journal-box:focus-within {
+      border-color: var(--border-focus);
+    }
+
+    .journal-title {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      outline: none;
+      margin-bottom: 1.25rem;
+      width: 100%;
+    }
+
+    .journal-title::placeholder {
+      color: var(--text-subtle);
+      font-style: italic;
+    }
+
+    .journal-textarea {
+      flex: 1;
+      width: 100%;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      line-height: 1.75;
+      resize: none;
+      outline: none;
+    }
+
+    .journal-textarea::placeholder {
+      color: var(--text-subtle);
+    }
+
+    .journal-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1.2rem;
+      margin-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .btn-primary {
+      background: var(--text-main);
+      color: var(--bg-primary);
+      border: none;
+      padding: 0.55rem 1.2rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+
+    /* Burn Animation */
+    .burning {
+      animation: burnDown 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      pointer-events: none;
+    }
+
+    @keyframes burnDown {
+      0% {
+        filter: blur(0px) brightness(1);
+        transform: scale(1);
+        opacity: 1;
+      }
+      35% {
+        filter: blur(2px) brightness(1.6) sepia(0.8) hue-rotate(-20deg);
+        box-shadow: 0 0 50px rgba(245, 158, 11, 0.6);
+      }
+      70% {
+        opacity: 0.4;
+        transform: translateY(20px) scale(0.96);
+        filter: blur(10px) brightness(2) contrast(1.5);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(40px) scale(0.9);
+        filter: blur(20px) brightness(0);
+      }
+    }
+
+    /* Passion & Insight Miner View */
+    .miner-layout {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .miner-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem 2rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .miner-card h3 {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      margin-bottom: 0.5rem;
+      color: var(--accent-sage);
+    }
+
+    .miner-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin: 1.2rem 0;
+    }
+
+    .miner-tag {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.9rem;
+      border-radius: 20px;
+      font-size: 0.84rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .miner-tag-badge {
+      background: var(--accent-lavender);
+      color: #121316;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .catalyst-prompt {
+      background: linear-gradient(135deg, rgba(148, 210, 189, 0.08), rgba(196, 181, 253, 0.08));
+      border-left: 3px solid var(--accent-sage);
+      padding: 1rem 1.25rem;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      margin-top: 1rem;
+      font-style: italic;
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+
+    /* Vault View */
+    .vault-layout {
+      max-width: 1050px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .vault-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .vault-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .vault-item:hover {
+      transform: translateY(-3px);
+      border-color: var(--border-focus);
+    }
+
+    .vault-thumb {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border);
+    }
+
+    .vault-item-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      color: var(--text-subtle);
+    }
+
+    .vault-item-title {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .vault-item-body {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .vault-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      margin-top: auto;
+      padding-top: 0.5rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 4rem 1rem;
+      color: var(--text-subtle);
+    }
+
+    .empty-state svg {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 0.75rem;
+      opacity: 0.5;
+    }
+
+    /* Modal / Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-focus);
+      color: var(--text-main);
+      padding: 0.7rem 1.4rem;
+      border-radius: 30px;
+      font-size: 0.88rem;
+      box-shadow: var(--shadow-lg);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 768px) {
+      header {
+        padding: 0.75rem 1rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      .brand span {
+        display: none;
+      }
+      .canvas-container {
+        height: 60vh;
+      }
+      .journal-box {
+        padding: 1.25rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="brand-icon">~</div>
+      <h1>MindUnwind</h1>
+      <span>Sanctuary</span>
+    </div>
+
+    <nav>
+      <button class="nav-btn active" data-tab="tab-scribble">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path></svg>
+        Scribble
+      </button>
+      <button class="nav-btn" data-tab="tab-journal">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        Mind Dump
+      </button>
+      <button class="nav-btn" data-tab="tab-miner">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+        Passion Miner
+      </button>
+      <button class="nav-btn" data-tab="tab-vault">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+        Vault (<span id="vault-count">0</span>)
+      </button>
+    </nav>
+
+    <div class="header-actions">
+      <button class="icon-btn audio-btn" id="ambient-toggle" title="Calming Ambient Rain">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path><path d="M8 19v2"></path><path d="M12 19v2"></path><path d="M16 19v2"></path></svg>
+      </button>
+      <button class="icon-btn" id="theme-toggle" title="Toggle Light/Dark Theme">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- TAB 1: SCRIBBLE & DRAW -->
+    <div id="tab-scribble" class="tab-content active">
+      <div class="canvas-layout">
+        <div class="canvas-toolbar">
+          <div class="tool-group">
+            <button class="tool-chip active" data-brush="pen">Pen</button>
+            <button class="tool-chip" data-brush="chaos">Tangle Scribble</button>
+            <button class="tool-chip" data-brush="charcoal">Soft Charcoal</button>
+            <button class="tool-chip" data-brush="glow">Neon Breakthrough</button>
+            <button class="tool-chip" data-brush="eraser">Eraser</button>
+          </div>
+
+          <div class="tool-group">
+            <div class="color-picker-wrap">
+              <span class="color-swatch active" style="background:#f3f4f6;" data-color="#f3f4f6"></span>
+              <span class="color-swatch" style="background:#94d2bd;" data-color="#94d2bd"></span>
+              <span class="color-swatch" style="background:#c4b5fd;" data-color="#c4b5fd"></span>
+              <span class="color-swatch" style="background:#f472b6;" data-color="#f472b6"></span>
+              <span class="color-swatch" style="background:#f59e0b;" data-color="#f59e0b"></span>
+              <span class="color-swatch" style="background:#374151;" data-color="#374151"></span>
+            </div>
+          </div>
+
+          <div class="tool-group">
+            <button class="btn-catharsis" id="canvas-release-btn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              Let It Go (Fade & Release)
+            </button>
+            <button class="btn-primary" id="save-canvas-btn">Save to Vault</button>
+          </div>
+        </div>
+
+        <div class="canvas-container" id="canvas-container">
+          <canvas id="paint-canvas"></canvas>
+          <canvas id="fx-canvas" class="canvas-overlay-catharsis"></canvas>
+        </div>
+
+        <div class="canvas-bottom-bar">
+          <span>Draw with raw emotion. Scribble wildly to vent racing thoughts, or trace gently to relax.</span>
+          <span id="stroke-counter">Strokes: 0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: MIND DUMP JOURNAL -->
+    <div id="tab-journal" class="tab-content">
+      <div class="journal-layout">
+        <div class="journal-header">
+          <div class="timer-group">
+            <span style="font-size:0.8rem; color:var(--text-subtle);">Focus Sprint:</span>
+            <button class="timer-pill" data-minutes="2">2 min dump</button>
+            <button class="timer-pill" data-minutes="5">5 min dump</button>
+            <span id="timer-display" style="font-size:0.84rem; font-family:var(--font-mono); color:var(--accent-amber); display:none;">02:00</span>
+          </div>
+
+          <button class="btn-catharsis" id="journal-burn-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+            Burn & Free Mind
+          </button>
+        </div>
+
+        <div class="journal-box" id="journal-container">
+          <input type="text" id="journal-title" class="journal-title" placeholder="A single thought, question, or feeling...">
+          <textarea id="journal-text" class="journal-textarea" placeholder="Dump everything in your head right now. No judgments, no backspaces needed, no grammar checks. What is making you feel stuck, excited, anxious, or curious?"></textarea>
+          
+          <div class="journal-footer">
+            <div id="journal-stats">0 words &bull; 0 characters</div>
+            <div style="display:flex; gap:0.6rem;">
+              <button class="tool-chip" id="mine-this-entry-btn">Extract Seeds</button>
+              <button class="btn-primary" id="save-journal-btn">Keep in Vault</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: PASSION & SEED MINER -->
+    <div id="tab-miner" class="tab-content">
+      <div class="miner-layout">
+        <div class="miner-card">
+          <h3>Subconscious Passion & Clarity Seeds</h3>
+          <p style="color:var(--text-muted); font-size:0.9rem;">
+            When we overthink, beneath the anxiety lies deep curiosity, values, and unexpressed ambitions. Here are the core themes detected from your mind dumps:
+          </p>
+
+          <div class="miner-tags" id="passion-tags-container">
+            <span class="miner-tag">Dump thoughts in the journal to discover hidden patterns.</span>
+          </div>
+
+          <div class="catalyst-prompt" id="catalyst-prompt-box">
+            "Your mind is like water. When it is turbulent, it is difficult to see. When it is calm, everything becomes clear."
+          </div>
+        </div>
+
+        <div class="miner-card">
+          <h3>Turn Clutter into Curiosity</h3>
+          <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1rem;">
+            Answer these 3 gentle pivot questions to transform racing thoughts into a creative project:
+          </p>
+          <div style="display:flex; flex-direction:column; gap:0.8rem; font-size:0.92rem;">
+            <div style="padding:0.75rem 1rem; background:var(--bg-surface-elevated); border-radius:var(--radius-sm);">
+              <strong>1. What were you protecting yourself from?</strong> (e.g. failure, judgment, fatigue)
+            </div>
+            <div style="padding:0.75rem 1rem; background:var(--bg-surface-elevated); border-radius:var(--radius-sm);">
+              <strong>2. If this problem didn't exist tomorrow, what would you spend 3 hours building?</strong>
+            </div>
+            <div style="padding:0.75rem 1rem; background:var(--bg-surface-elevated); border-radius:var(--radius-sm);">
+              <strong>3. What tiny scribble or sentence can you start without anyone's permission?</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: VAULT / ARCHIVE -->
+    <div id="tab-vault" class="tab-content">
+      <div class="vault-layout">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h2 style="font-size:1.3rem;">Your Private Vault</h2>
+          <button class="tool-chip" id="clear-vault-btn" style="color:var(--accent-rose);">Clear All</button>
+        </div>
+        <div class="vault-grid" id="vault-grid"></div>
+      </div>
+    </div>
+  </main>
+
+  <div id="toast" class="toast">Entry saved to private vault</div>
+
+  <script>
+    /* State */
+    const STATE = {
+      theme: 'dark',
+      activeTab: 'tab-scribble',
+      brush: 'pen',
+      color: '#f3f4f6',
+      brushSize: 3,
+      isDrawing: false,
+      strokesCount: 0,
+      audioActive: false,
+      audioContext: null,
+      noiseNode: null,
+      timerInterval: null
+    };
+
+    /* DOM Selectors */
+    const paintCanvas = document.getElementById('paint-canvas');
+    const fxCanvas = document.getElementById('fx-canvas');
+    const pCtx = paintCanvas.getContext('2d');
+    const fCtx = fxCanvas.getContext('2d');
+    const canvasContainer = document.getElementById('canvas-container');
+    const strokeCounter = document.getElementById('stroke-counter');
+    const toast = document.getElementById('toast');
+
+    /* Navigation */
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        const tabId = btn.getAttribute('data-tab');
+        document.getElementById(tabId).classList.add('active');
+        STATE.activeTab = tabId;
+        if(tabId === 'tab-scribble') resizeCanvases();
+        if(tabId === 'tab-vault') renderVault();
+        if(tabId === 'tab-miner') runPassionMiner();
+      });
+    });
+
+    /* Theme Switcher */
+    const themeBtn = document.getElementById('theme-toggle');
+    themeBtn.addEventListener('click', () => {
+      STATE.theme = STATE.theme === 'dark' ? 'light' : 'dark';
+      document.body.setAttribute('data-theme', STATE.theme);
+      STATE.color = STATE.theme === 'dark' ? '#f3f4f6' : '#1f2937';
+      document.querySelectorAll('.color-swatch')[0].setAttribute('data-color', STATE.color);
+      document.querySelectorAll('.color-swatch')[0].style.background = STATE.color;
+    });
+
+    /* Canvas Drawing Engine */
+    let lastX = 0;
+    let lastY = 0;
+
+    function resizeCanvases() {
+      const rect = canvasContainer.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      
+      // Save canvas state before resize
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = paintCanvas.width;
+      tempCanvas.height = paintCanvas.height;
+      const tempCtx = tempCanvas.getContext('2d');
+      tempCtx.drawImage(paintCanvas, 0, 0);
+
+      paintCanvas.width = rect.width * dpr;
+      paintCanvas.height = rect.height * dpr;
+      paintCanvas.style.width = `${rect.width}px`;
+      paintCanvas.style.height = `${rect.height}px`;
+
+      fxCanvas.width = rect.width * dpr;
+      fxCanvas.height = rect.height * dpr;
+      fxCanvas.style.width = `${rect.width}px`;
+      fxCanvas.style.height = `${rect.height}px`;
+
+      pCtx.scale(dpr, dpr);
+      fCtx.scale(dpr, dpr);
+      pCtx.lineCap = 'round';
+      pCtx.lineJoin = 'round';
+
+      // Restore drawing
+      pCtx.drawImage(tempCanvas, 0, 0, tempCanvas.width / dpr, tempCanvas.height / dpr);
+    }
+
+    window.addEventListener('resize', resizeCanvases);
+    setTimeout(resizeCanvases, 50);
+
+    function getCoords(e) {
+      const rect = paintCanvas.getBoundingClientRect();
+      if (e.touches && e.touches.length > 0) {
+        return {
+          x: e.touches[0].clientX - rect.left,
+          y: e.touches[0].clientY - rect.top
+        };
+      }
+      return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      };
+    }
+
+    function startDraw(e) {
+      STATE.isDrawing = true;
+      const { x, y } = getCoords(e);
+      lastX = x;
+      lastY = y;
+      STATE.strokesCount++;
+      strokeCounter.innerText = `Strokes: ${STATE.strokesCount}`;
+      draw(e);
+    }
+
+    function stopDraw() {
+      STATE.isDrawing = false;
+      pCtx.beginPath();
+    }
+
+    function draw(e) {
+      if (!STATE.isDrawing) return;
+      e.preventDefault();
+      const { x, y } = getCoords(e);
+
+      pCtx.save();
+      if (STATE.brush === 'pen') {
+        pCtx.strokeStyle = STATE.color;
+        pCtx.lineWidth = 3;
+        pCtx.beginPath();
+        pCtx.moveTo(lastX, lastY);
+        pCtx.lineTo(x, y);
+        pCtx.stroke();
+      } else if (STATE.brush === 'chaos') {
+        // Venting scribble: adds spontaneous tangled lines around the stroke
+        pCtx.strokeStyle = STATE.color;
+        pCtx.lineWidth = 1.5;
+        pCtx.beginPath();
+        pCtx.moveTo(lastX, lastY);
+        pCtx.lineTo(x, y);
+        pCtx.stroke();
+
+        for (let i = 0; i < 3; i++) {
+          const offsetX = (Math.random() - 0.5) * 26;
+          const offsetY = (Math.random() - 0.5) * 26;
+          pCtx.strokeStyle = STATE.color;
+          pCtx.globalAlpha = 0.45;
+          pCtx.beginPath();
+          pCtx.moveTo(lastX + offsetX, lastY + offsetY);
+          pCtx.lineTo(x + offsetX, y + offsetY);
+          pCtx.stroke();
+        }
+      } else if (STATE.brush === 'charcoal') {
+        pCtx.strokeStyle = STATE.color;
+        pCtx.globalAlpha = 0.18;
+        pCtx.lineWidth = 16;
+        pCtx.beginPath();
+        pCtx.moveTo(lastX, lastY);
+        pCtx.lineTo(x, y);
+        pCtx.stroke();
+      } else if (STATE.brush === 'glow') {
+        pCtx.strokeStyle = STATE.color;
+        pCtx.shadowColor = STATE.color;
+        pCtx.shadowBlur = 15;
+        pCtx.lineWidth = 4;
+        pCtx.beginPath();
+        pCtx.moveTo(lastX, lastY);
+        pCtx.lineTo(x, y);
+        pCtx.stroke();
+      } else if (STATE.brush === 'eraser') {
+        pCtx.strokeStyle = STATE.theme === 'dark' ? '#1a1c23' : '#ffffff';
+        pCtx.lineWidth = 26;
+        pCtx.beginPath();
+        pCtx.moveTo(lastX, lastY);
+        pCtx.lineTo(x, y);
+        pCtx.stroke();
+      }
+      pCtx.restore();
+
+      lastX = x;
+      lastY = y;
+    }
+
+    paintCanvas.addEventListener('mousedown', startDraw);
+    paintCanvas.addEventListener('mousemove', draw);
+    paintCanvas.addEventListener('mouseup', stopDraw);
+    paintCanvas.addEventListener('mouseleave', stopDraw);
+
+    paintCanvas.addEventListener('touchstart', startDraw, { passive: false });
+    paintCanvas.addEventListener('touchmove', draw, { passive: false });
+    paintCanvas.addEventListener('touchend', stopDraw);
+
+    /* Tool Swatches & Brush Selectors */
+    document.querySelectorAll('[data-brush]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-brush]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        STATE.brush = btn.getAttribute('data-brush');
+      });
+    });
+
+    document.querySelectorAll('.color-swatch').forEach(swatch => {
+      swatch.addEventListener('click', () => {
+        document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+        swatch.classList.add('active');
+        STATE.color = swatch.getAttribute('data-color');
+      });
+    });
+
+    /* Let It Go (Fade / Catharsis Particle Animation) */
+    const releaseBtn = document.getElementById('canvas-release-btn');
+    releaseBtn.addEventListener('click', () => {
+      const rect = canvasContainer.getBoundingClientRect();
+      const particles = [];
+
+      for (let i = 0; i < 90; i++) {
+        particles.push({
+          x: Math.random() * rect.width,
+          y: Math.random() * rect.height,
+          vx: (Math.random() - 0.5) * 3,
+          vy: -Math.random() * 3 - 1,
+          size: Math.random() * 4 + 1,
+          alpha: 1,
+          color: STATE.color
+        });
+      }
+
+      let frames = 0;
+      function animateCatharsis() {
+        fCtx.clearRect(0, 0, rect.width, rect.height);
+        // Dim drawing gradually
+        pCtx.save();
+        pCtx.globalAlpha = 0.08;
+        pCtx.fillStyle = STATE.theme === 'dark' ? '#1a1c23' : '#ffffff';
+        pCtx.fillRect(0, 0, rect.width, rect.height);
+        pCtx.restore();
+
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.alpha -= 0.016;
+          fCtx.fillStyle = p.color;
+          fCtx.globalAlpha = Math.max(0, p.alpha);
+          fCtx.beginPath();
+          fCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          fCtx.fill();
+        });
+
+        frames++;
+        if (frames < 70) {
+          requestAnimationFrame(animateCatharsis);
+        } else {
+          fCtx.clearRect(0, 0, rect.width, rect.height);
+          pCtx.clearRect(0, 0, rect.width, rect.height);
+          STATE.strokesCount = 0;
+          strokeCounter.innerText = "Strokes: 0";
+          showToast("Thoughts released into the ether.");
+        }
+      }
+      animateCatharsis();
+    });
+
+    /* Journal Logic */
+    const journalTitle = document.getElementById('journal-title');
+    const journalText = document.getElementById('journal-text');
+    const journalStats = document.getElementById('journal-stats');
+    const journalBurnBtn = document.getElementById('journal-burn-btn');
+    const journalContainer = document.getElementById('journal-container');
+
+    journalText.addEventListener('input', () => {
+      const text = journalText.value.trim();
+      const words = text ? text.split(/\s+/).length : 0;
+      journalStats.innerText = `${words} words • ${text.length} characters`;
+    });
+
+    /* Burn Feature */
+    journalBurnBtn.addEventListener('click', () => {
+      if (!journalText.value && !journalTitle.value) return;
+      journalContainer.classList.add('burning');
+      setTimeout(() => {
+        journalTitle.value = '';
+        journalText.value = '';
+        journalStats.innerText = '0 words • 0 characters';
+        journalContainer.classList.remove('burning');
+        showToast("Your thought dump has been cleanly burned.");
+      }, 1750);
+    });
+
+    /* Timer Logic */
+    document.querySelectorAll('.timer-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        const mins = parseInt(pill.getAttribute('data-minutes'));
+        startTimer(mins);
+      });
+    });
+
+    function startTimer(minutes) {
+      clearInterval(STATE.timerInterval);
+      const display = document.getElementById('timer-display');
+      display.style.display = 'inline-block';
+      let remaining = minutes * 60;
+
+      function update() {
+        const m = Math.floor(remaining / 60).toString().padStart(2, '0');
+        const s = (remaining % 60).toString().padStart(2, '0');
+        display.innerText = `${m}:${s}`;
+        if (remaining <= 0) {
+          clearInterval(STATE.timerInterval);
+          showToast("Focus sprint complete! Take a slow breath.");
+        }
+        remaining--;
+      }
+      update();
+      STATE.timerInterval = setInterval(update, 1000);
+    }
+
+    /* Vault Storage (Local) */
+    function getVaultData() {
+      try {
+        return JSON.parse(localStorage.getItem('mind_vault_items') || '[]');
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveToVault(item) {
+      const vault = getVaultData();
+      vault.unshift(item);
+      localStorage.setItem('mind_vault_items', JSON.stringify(vault));
+      updateVaultCount();
+      showToast("Saved to your private vault.");
+    }
+
+    function updateVaultCount() {
+      const vault = getVaultData();
+      document.getElementById('vault-count').innerText = vault.length;
+    }
+    updateVaultCount();
+
+    document.getElementById('save-canvas-btn').addEventListener('click', () => {
+      const dataUrl = paintCanvas.toDataURL('image/png');
+      saveToVault({
+        id: Date.now(),
+        type: 'canvas',
+        title: `Visual Dump #${getVaultData().length + 1}`,
+        image: dataUrl,
+        date: new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+      });
+    });
+
+    document.getElementById('save-journal-btn').addEventListener('click', () => {
+      const title = journalTitle.value.trim() || 'Untitled Reflection';
+      const body = journalText.value.trim();
+      if (!body) {
+        showToast("Write a few thoughts first.");
+        return;
+      }
+      saveToVault({
+        id: Date.now(),
+        type: 'journal',
+        title: title,
+        body: body,
+        date: new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+      });
+      journalTitle.value = '';
+      journalText.value = '';
+      journalStats.innerText = '0 words • 0 characters';
+    });
+
+    function renderVault() {
+      const container = document.getElementById('vault-grid');
+      const items = getVaultData();
+      if (items.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state" style="grid-column: 1/-1;">
+            <p>Your vault is completely empty.</p>
+            <span style="font-size:0.85rem;">Draw or write something and choose "Save to Vault".</span>
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = items.map(it => {
+        if (it.type === 'canvas') {
+          return `
+            <div class="vault-item">
+              <img src="${it.image}" class="vault-thumb" alt="Drawing">
+              <div class="vault-item-meta">
+                <span>Visual Scribble</span>
+                <span>${it.date}</span>
+              </div>
+              <div class="vault-item-title">${it.title}</div>
+              <div class="vault-actions">
+                <a href="${it.image}" download="${it.title}.png" class="tool-chip" style="text-decoration:none;">Download PNG</a>
+                <button class="tool-chip" onclick="deleteVaultItem(${it.id})" style="color:var(--accent-rose);">Delete</button>
+              </div>
+            </div>`;
+        } else {
+          return `
+            <div class="vault-item">
+              <div class="vault-item-meta">
+                <span>Stream of Mind</span>
+                <span>${it.date}</span>
+              </div>
+              <div class="vault-item-title">${it.title}</div>
+              <div class="vault-item-body">${it.body}</div>
+              <div class="vault-actions">
+                <button class="tool-chip" onclick="copyText('${encodeURIComponent(it.body)}')">Copy Text</button>
+                <button class="tool-chip" onclick="deleteVaultItem(${it.id})" style="color:var(--accent-rose);">Delete</button>
+              </div>
+            </div>`;
+        }
+      }).join('');
+    }
+
+    window.deleteVaultItem = function(id) {
+      let vault = getVaultData();
+      vault = vault.filter(v => v.id !== id);
+      localStorage.setItem('mind_vault_items', JSON.stringify(vault));
+      updateVaultCount();
+      renderVault();
+    };
+
+    window.copyText = function(encoded) {
+      navigator.clipboard.writeText(decodeURIComponent(encoded));
+      showToast("Copied to clipboard!");
+    };
+
+    document.getElementById('clear-vault-btn').addEventListener('click', () => {
+      if (confirm("Clear all items in your private vault?")) {
+        localStorage.removeItem('mind_vault_items');
+        updateVaultCount();
+        renderVault();
+        showToast("Vault emptied.");
+      }
+    });
+
+    /* Passion & Clarity Miner */
+    const KEYWORD_MAP = {
+      'Building & Craft': ['build', 'create', 'make', 'code', 'design', 'fix', 'develop', 'invent', 'draw', 'solve'],
+      'Storytelling & Truth': ['write', 'story', 'tell', 'read', 'book', 'express', 'film', 'share', 'words', 'speak'],
+      'Curiosity & Strategy': ['learn', 'why', 'study', 'question', 'research', 'explore', 'investigate', 'analyze', 'understand'],
+      'Compassion & Healing': ['help', 'care', 'listen', 'connect', 'people', 'friend', 'love', 'heal', 'calm', 'support'],
+      'Freedom & Adventure': ['travel', 'escape', 'nature', 'outside', 'run', 'fly', 'wild', 'free', 'move', 'journey']
+    };
+
+    function runPassionMiner() {
+      const items = getVaultData();
+      const currentText = journalText.value.toLowerCase();
+      let corpus = currentText + " " + items.map(it => (it.body || '')).join(" ").toLowerCase();
+
+      const scores = {};
+      Object.keys(KEYWORD_MAP).forEach(theme => {
+        let count = 0;
+        KEYWORD_MAP[theme].forEach(kw => {
+          const matches = corpus.split(kw).length - 1;
+          count += matches;
+        });
+        if (count > 0) scores[theme] = count;
+      });
+
+      const container = document.getElementById('passion-tags-container');
+      const keys = Object.keys(scores);
+
+      if (keys.length === 0) {
+        container.innerHTML = `<span class="miner-tag">Pour out more unfiltered thoughts to uncover underlying passions.</span>`;
+        return;
+      }
+
+      keys.sort((a, b) => scores[b] - scores[a]);
+      container.innerHTML = keys.map(k => `
+        <span class="miner-tag">
+          <strong>${k}</strong>
+          <span class="miner-tag-badge">${scores[k]}</span>
+        </span>
+      `).join('');
+
+      const top = keys[0];
+      const prompts = {
+        'Building & Craft': '"You don\'t need a full plan to begin. What is the smallest physical or digital prototype you can sketch in 10 minutes?"',
+        'Storytelling & Truth': '"What is one honest observation you noticed this week that nobody else is saying out loud?"',
+        'Curiosity & Strategy': '"What question has been quietly lingering in your head that you haven\'t allowed yourself time to research?"',
+        'Compassion & Healing': '"How can your current struggle become a roadmap or comforting message for someone just one step behind you?"',
+        'Freedom & Adventure': '"If there were no expectations from family or society, where would your feet walk tomorrow morning?"'
+      };
+
+      document.getElementById('catalyst-prompt-box').innerText = prompts[top] || prompts['Building & Craft'];
+    }
+
+    document.getElementById('mine-this-entry-btn').addEventListener('click', () => {
+      document.querySelector('[data-tab="tab-miner"]').click();
+    });
+
+    /* Ambient Sound via Web Audio API (Pink Rain Noise) */
+    const ambientBtn = document.getElementById('ambient-toggle');
+    ambientBtn.addEventListener('click', () => {
+      if (!STATE.audioActive) {
+        startAmbientAudio();
+      } else {
+        stopAmbientAudio();
+      }
+    });
+
+    function startAmbientAudio() {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        STATE.audioContext = new AudioContext();
+
+        // Pink noise generation buffer
+        const bufferSize = STATE.audioContext.sampleRate * 2;
+        const buffer = STATE.audioContext.createBuffer(1, bufferSize, STATE.audioContext.sampleRate);
+        const data = buffer.getChannelData(0);
+
+        let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+        for (let i = 0; i < bufferSize; i++) {
+          const white = Math.random() * 2 - 1;
+          b0 = 0.99886 * b0 + white * 0.0555179;
+          b1 = 0.99332 * b1 + white * 0.0750759;
+          b2 = 0.96900 * b2 + white * 0.1538520;
+          b3 = 0.86650 * b3 + white * 0.3104856;
+          b4 = 0.55000 * b4 + white * 0.5329522;
+          b5 = -0.7616 * b5 - white * 0.0168980;
+          data[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+          data[i] *= 0.06; // Calm ambient volume
+          b6 = white * 0.115926;
+        }
+
+        STATE.noiseNode = STATE.audioContext.createBufferSource();
+        STATE.noiseNode.buffer = buffer;
+        STATE.noiseNode.loop = true;
+
+        // Gentle lowpass filter for soft rain timbre
+        const filter = STATE.audioContext.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(800, STATE.audioContext.currentTime);
+
+        STATE.noiseNode.connect(filter);
+        filter.connect(STATE.audioContext.destination);
+
+        STATE.noiseNode.start();
+        STATE.audioActive = true;
+        ambientBtn.classList.add('playing');
+        showToast("Soft rain audio enabled.");
+      } catch (err) {
+        console.error("Audio error:", err);
+      }
+    }
+
+    function stopAmbientAudio() {
+      if (STATE.noiseNode) {
+        try { STATE.noiseNode.stop(); } catch(e){}
+      }
+      if (STATE.audioContext) {
+        try { STATE.audioContext.close(); } catch(e){}
+      }
+      STATE.audioActive = false;
+      ambientBtn.classList.remove('playing');
+      showToast("Ambient audio muted.");
+    }
+
+    /* Toast Helper */
+    function showToast(msg) {
+      toast.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2600);
+    }
+  </script>
+</body>
+</html>
